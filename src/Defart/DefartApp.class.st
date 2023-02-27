@@ -169,7 +169,7 @@ DefartApp class >> settingsClass [
 { #category : #accessing }
 DefartApp class >> themesURL [
 
-	^ 'https://raw.githubusercontent.com/EiichiroIto/Algorit/master/misc/Themes.zip'
+	^ 'https://github.com/EiichiroIto/Defart4Microbit/raw/main/misc/Themes.zip'
 ]
 
 { #category : #proxy }
