@@ -19,12 +19,6 @@ DefartProject class >> fileVersionTag [
 	^ 'DefartV'
 ]
 
-{ #category : #constants }
-DefartProject class >> objStreamClass [
-
-	^ STONObjStream
-]
-
 { #category : #'ston-core' }
 DefartProject class >> stonAllInstVarNames [
 
@@ -39,24 +33,18 @@ DefartProject >> addBlockSpecsTo: aBlockMorphBuilder [
 			aBlockMorphBuilder addBlockSpec: each ] ]
 ]
 
-{ #category : #adding }
-DefartProject >> addScriptNamed: aString [
+{ #category : #accessing }
+DefartProject >> assureExistsScriptNamed: each [
 
-	| script |
-	script := self newScript
-		project: self;
-		objName: aString;
-		yourself.
-	self addScript: script.
-	^ script
+	self assert: [ each = 'main' ].
+	scripts notEmpty ifTrue: [ ^ self ].
+	self addScript: self newScript
 ]
 
-{ #category : #accessing }
-DefartProject >> assureExistsBreed: each [
+{ #category : #evaluation }
+DefartProject >> evaluateBlock: aTopBlock [
 
-	((self scripts collect: #objName) includes: each)
-		ifTrue: [ ^ self ].
-	self addScriptNamed: each
+	^ application evaluateBlock: aTopBlock
 ]
 
 { #category : #initialization }
@@ -85,14 +73,23 @@ DefartProject >> moduleFiles [
 ]
 
 { #category : #'instance creation' }
+DefartProject >> newObjStream [
+
+	^ STONObjStream new
+]
+
+{ #category : #'instance creation' }
 DefartProject >> newScript [
 
 	^ DefartScript new
+		  project: self;
+		  yourself
 ]
 
 { #category : #api }
 DefartProject >> setupScripts [
 
+	self assureExistsScriptNamed: 'main'.
 	scripts do: #updateEdgesPosition
 ]
 

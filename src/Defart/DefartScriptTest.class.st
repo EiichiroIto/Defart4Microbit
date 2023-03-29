@@ -106,18 +106,6 @@ DefartScriptTest >> testAssignIds2 [
 ]
 
 { #category : #test }
-DefartScriptTest >> testObjName [
-
-	| script |
-	script := self newScript.
-	self assert: script objName isNil.
-	script objName: 'abc'.
-	self assert: script objName equals: 'abc'.
-	script objName: 'def'.
-	self assert: script objName equals: 'def'
-]
-
-{ #category : #test }
 DefartScriptTest >> testVarNames [
 
 	| script a |

@@ -2,7 +2,6 @@ Class {
 	#name : #DefartScript,
 	#superclass : #ScratchScript,
 	#instVars : [
-		'objName',
 		'varNames'
 	],
 	#category : #'Defart-Project'
@@ -11,10 +10,10 @@ Class {
 { #category : #'ston-core' }
 DefartScript class >> stonAllInstVarNames [
 
-	^ super stonAllInstVarNames , #(objName varNames)
+	^ super stonAllInstVarNames , #(varNames)
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addArgBuilder [
 
 	argMorphBuilder
@@ -53,7 +52,7 @@ DefartScript >> addArgBuilder [
 	project addBlockSpecsTo: argMorphBuilder
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addBlockSpecs [
 
 	self
@@ -64,7 +63,7 @@ DefartScript >> addBlockSpecs [
 	self addOperatorsBlockSpecs
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addControlBlockSpecs [
 
 	blockMorphBuilder
@@ -77,7 +76,7 @@ DefartScript >> addControlBlockSpecs [
 		addCBlock: 'do %s each %l' selector: #doIterate arguments: #( 'list' )
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addIoBlockSpecs [
 
 	blockMorphBuilder
@@ -91,7 +90,7 @@ DefartScript >> addIoBlockSpecs [
 		addCommand: 'servo write pin %G to %n degrees' selector: #writeServo:to: arguments: #( 0 180 )
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addOperatorsBlockSpecs [
 
 	blockMorphBuilder
@@ -101,7 +100,7 @@ DefartScript >> addOperatorsBlockSpecs [
 		arguments: #( 'sqrt' 10 )
 ]
 
-{ #category : #adding }
+{ #category : #'block specs' }
 DefartScript >> addVariableBlockSpecs [
 
 	blockMorphBuilder
@@ -160,7 +159,7 @@ DefartScript >> convertEventHatTuple: anArray [
 	^ super convertEventHatTuple: anArray
 ]
 
-{ #category : #api }
+{ #category : #accessing }
 DefartScript >> edgeMorphWithId: anInteger [
 
 	^ blocksBin
@@ -175,7 +174,7 @@ DefartScript >> edgeMorphs [
 	^ blocksBin 	submorphsSatisfying: [ :each | each isEdgeMorph ]
 ]
 
-{ #category : #api }
+{ #category : #accessing }
 DefartScript >> edgeMorphsConnectingWith: aNode [
 
 	^ blocksBin submorphs select: [ :each | 
@@ -184,6 +183,21 @@ DefartScript >> edgeMorphsConnectingWith: aNode [
 ]
 
 { #category : #accessing }
+DefartScript >> edgeMorphsConnectingWith: aNode and: anotherNode [
+
+	^ blocksBin submorphs select: [ :each | 
+		  each isEdgeMorph and: [ 
+			  (each fromNode = aNode and: [ each toNode = anotherNode ]) or: [ 
+				  each toNode = aNode and: [ each fromNode = anotherNode ] ] ] ]
+]
+
+{ #category : #evaluation }
+DefartScript >> evaluateBlock: aTopBlock [
+
+	^ project evaluateBlock: aTopBlock
+]
+
+{ #category : #api }
 DefartScript >> fixScriptBeforeWriting [
 
 	super fixScriptBeforeWriting.
@@ -215,7 +229,7 @@ DefartScript >> loopBlockSelectors [
 	^ super loopBlockSelectors , #( doWhile doIterate )
 ]
 
-{ #category : #api }
+{ #category : #accessing }
 DefartScript >> multipleEdgesOf: aCollection [
 
 	| result rest edge edges |
@@ -246,7 +260,7 @@ DefartScript >> newBlockMorphBuilder [
 		  yourself
 ]
 
-{ #category : #api }
+{ #category : #accessing }
 DefartScript >> nodeMorphWithId: anInteger [
 
 	^ blocksBin
@@ -264,13 +278,7 @@ DefartScript >> nodeMorphs [
 { #category : #accessing }
 DefartScript >> objName [
 
-	^ objName
-]
-
-{ #category : #accessing }
-DefartScript >> objName: anObject [
-
-	objName := anObject
+	^ 'main'
 ]
 
 { #category : #'block specs' }
@@ -298,12 +306,6 @@ DefartScript >> setupBlockCategory [
 DefartScript >> startHatBlockNames [
 
 	^ #( initialState: )
-]
-
-{ #category : #accessing }
-DefartScript >> startNodeMorph [
-
-	^ blocksBin submorphs detect: [ :each | each isStartNodeMorph ]
 ]
 
 { #category : #accessing }

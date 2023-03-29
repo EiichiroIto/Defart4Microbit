@@ -23,7 +23,9 @@ DefartGenerator >> dictionaryFromEdgeMorphs: aCollection [
 DefartGenerator >> generateCond: aMorph [
 
 	| expr |
-	expr := parser reporterArgString: aMorph reporterMorph.
+	expr := aMorph reporterMorph
+		        ifNil: [ 'False' ]
+		        ifNotNil: [ :morph | parser reporterArgString: morph ].
 	self appendWithNewline: 'if ' , expr , ':'
 ]
 
@@ -110,10 +112,14 @@ DefartGenerator >> parseHats: aCollection [
 { #category : #parsing }
 DefartGenerator >> parseScript: aScript [
 
-	| code |
+	| code startNodeMorph |
+	startNodeMorph := aScript startNodeMorphs in: [ :list | 
+		                  (list isEmpty or: [ list size > 1 ])
+			                  ifTrue: [ self error ]
+			                  ifFalse: [ list first ] ].
 	self generateStates: aScript nodeMorphs.
 	self generateTransitions: aScript connectedEdgeMorphs.
-	self generateMainStartingAt: aScript startNodeMorph id.
+	self generateMainStartingAt: startNodeMorph id.
 	code := self code.
 	^ self header , code
 ]

@@ -69,16 +69,21 @@ DefartEdgeMorph >> dragVertex: ix event: evt fromHandle: handle [
 { #category : #'event handling' }
 DefartEdgeMorph >> dropVertex: ix event: evt fromHandle: handle [
 
-	| node |
+	| node edges oppositeNode |
 	owner ifNil: [ ^ self ].
 	node := owner
 		        submorphThat: [ :each | 
 		        each isNodeMorph and: [ each containsPoint: handle center ] ]
 		        ifNone: [ nil ].
 	node ifNil: [ ^ self ].
+	self removeHandles.
 	(self checkEdgeIndex: ix node: node) ifTrue: [ ^ self delete ].
 	nodes at: ix put: node.
-	self removeHandles
+	oppositeNode := nodes at: 3 - ix.
+	oppositeNode ifNil: [ ^ self ].
+	edges := receiver edgeMorphsConnectingWith: node and: oppositeNode.
+	edges size > 1 ifTrue: [ 
+		edges do: [ :each | each updatePositionDelta: 10 ] ]
 ]
 
 { #category : #private }

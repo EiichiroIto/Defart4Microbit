@@ -202,12 +202,6 @@ DefartApp >> availablePortNames [
 	^ (proxy portNames \ (settings unusedPortNames splitOn: $,)) sorted
 ]
 
-{ #category : #private }
-DefartApp >> backupProject [
-
-	self shouldNotImplement
-]
-
 { #category : #proxy }
 DefartApp >> break [
 
@@ -291,6 +285,18 @@ DefartApp >> evaluate: aString [
 	^ ret
 ]
 
+{ #category : #evaluation }
+DefartApp >> evaluateBlock: aTopBlock [
+
+	| code |
+	self stopAllProcesses.
+	code := self newCode
+		        withHeader: true;
+		        parseBlock: aTopBlock.
+	code isEmpty ifTrue: [ ^ nil ].
+	^ self evaluate: code
+]
+
 { #category : #proxy }
 DefartApp >> execute: aString [
 
@@ -340,7 +346,6 @@ DefartApp >> installNewProject: aProject [
 	self stopAllProcesses.
 	project := aProject.
 	project application: self.
-	project assureExistsBreed: 'main'.
 	project setupScripts.
 	self setupProxy.
 	project setupBlockSpecs.
@@ -583,4 +588,14 @@ DefartApp >> uploadProgram [
 DefartApp >> windowClosing [
 
 	self proxy close
+]
+
+{ #category : #writing }
+DefartApp >> writeProjectAs: aFileReference [
+
+	| ret |
+	ret := super writeProjectAs: aFileReference.
+	ret ifFalse: [ ^ false ].
+	project setupScripts.
+	^ true
 ]

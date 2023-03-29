@@ -104,5 +104,5 @@ DefartNodeMorph >> justDroppedInto: newOwner event: evt [
 	edges := receiver edgeMorphsConnectingWith: self.
 	edges do: [ :each | each updatePosition ].
 	(receiver multipleEdgesOf: edges) do: [ :each | 
-		each do: [ :each2 | each2 updatePositionDelta: 10 ] ]
+		each updatePositionDelta: 10 ]
 ]
